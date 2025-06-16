@@ -1,0 +1,519 @@
+/* General Body and HTML Reset */
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background-color: #f0f2f5; /* Light grey background for the overall page */
+  /* overflow: hidden; Prevent body scroll, handled by specific divs */
+}
+
+/* New: Outer wrapper for the entire application, handles overall flex layout */
+.app-wrapper {
+  display: flex;
+  flex-direction: column; /* Stacks header, content-wrapper, and footer vertically */
+  min-height: 100vh; /* Ensures wrapper takes full viewport height */
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Navbar styles - Top bar */
+.navbar {
+  position: fixed; /* Fixed to the top */
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #f9f1ea; /* Grey from your provided style */
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px 0 22px;
+  z-index: 1001; /* High z-index to stay on top */
+  box-sizing: border-box; /* Include padding in width calculation */
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #333; /* Dark color for visibility against light navbar */
+  display: flex; /* To vertically center the icon */
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-btn:hover {
+  background-color: #e9ecef;
+  border-radius: 4px; /* Slight rounded corners on hover */
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Logo styles for large and small versions */
+.logo-large {
+  height: 135px; /* From your provided style */
+  width: auto;
+  object-fit: contain;
+}
+
+.logo-small {
+  height: 35px; /* From your provided style */
+  width: 35px;
+  object-fit: contain;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  font-size: 18px;
+  position: relative;
+}
+
+.navbar-right svg {
+  cursor: pointer;
+  color: #555; /* Dark color for visibility */
+}
+
+.profile-img {
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid #ddd;
+}
+
+.profile-img:hover {
+  border-color: #007bff;
+}
+
+.profile-popup {
+  position: absolute;
+  top: 50px; /* Position below the navbar */
+  right: 0;
+  background: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  width: 180px;
+  padding: 10px 0;
+  z-index: 1002; /* Higher than navbar to appear on top */
+  overflow: hidden; /* Ensures content respects border-radius */
+}
+
+.profile-popup .popup-welcome {
+  padding: 10px 15px;
+  font-size: 0.85em;
+  color: #666;
+  border-bottom: 1px solid #eee;
+}
+
+.profile-popup .popup-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.profile-popup .popup-item:hover {
+  background-color: #f0f0f0;
+  color: #007bff;
+}
+
+.profile-popup .popup-item svg {
+  margin-right: 0; /* Gap handles spacing */
+  font-size: 16px;
+}
+
+/* Flex container for sidebar and main content */
+.content-and-sidebar-wrapper {
+  display: flex;
+  flex-grow: 1; /* Takes remaining vertical space in app-wrapper */
+  margin-top: 60px; /* Space for fixed navbar */
+  /* margin-bottom handled by app-footer */
+  position: relative; /* Context for sidebar fixed positioning */
+  overflow: hidden; /* Important for hiding content outside layout boundary */
+}
+
+/* Sidebar styles (Desktop & Mobile Base) */
+.sidebar {
+  width: 280px; /* Default expanded width for desktop and mobile overlay */
+  height: 100%; /* Take full height of .content-and-sidebar-wrapper */
+  background: #f9f1ea; /* Grey from your provided style */
+  position: fixed; /* Fixed to the left edge of the viewport */
+  top: 60px; /* Starts below the navbar */
+  left: 0;
+  overflow-y: auto; /* Enable vertical scrolling for menu content */
+  transition: all 0.3s ease; /* Smooth transitions for width and transform */
+  border-right: 1px solid #ddd;
+  z-index: 999; /* Below navbar, above main content */
+}
+
+/* Collapsed sidebar (Desktop) */
+.sidebar.collapsed {
+  width: 70px; /* Reduced width when collapsed */
+  overflow-x: hidden; /* Hide horizontal overflow, crucial for hiding text */
+}
+
+/* Main content area */
+.main-content {
+  flex-grow: 1; /* Takes up remaining horizontal space */
+  padding: 20px;
+  background-color: #f0f2f5; /* Body background color for consistency */
+  min-height: 100%; /* Occupy full height of parent flex item */
+  box-sizing: border-box; /* Include padding in height calculation */
+  overflow-y: auto; /* Enable scrolling for main content */
+  /* Default desktop margin, will be overridden by JS class */
+  margin-left: 280px;
+  transition: margin-left 0.3s ease;
+}
+
+/* Adjust main content margin when sidebar is collapsed (desktop) */
+/* This class is applied by JS to .main-content to control its margin */
+.main-content.collapsed-margin {
+  margin-left: 70px;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  /* Navbar adjustments for mobile */
+  .navbar {
+    padding: 0 15px; /* Less padding on smaller screens */
+  }
+
+  /* Main content on mobile: no push from sidebar */
+  .main-content {
+    margin-left: 0 !important; /* Override desktop margin on mobile */
+  }
+
+  /* Sidebar acts as an overlay on mobile */
+  .sidebar {
+    transform: translateX(-100%); /* Initially hide sidebar off-screen to the left */
+    /* width remains 250px */
+    height: calc(100vh - 60px); /* Full height minus navbar */
+    box-shadow: 0 0 15px rgba(0,0,0,0.2); /* Add shadow for overlay effect */
+    z-index: 1000; /* Higher z-index for mobile overlay, above main content */
+  }
+
+  /* Mobile sidebar (active/open) */
+  .sidebar.active-mobile {
+    transform: translateX(0%); /* Slide sidebar into view */
+  }
+}
+
+
+/* Sidebar menu items */
+.menu-section {
+  padding: 10px;
+}
+
+.menu-item {
+  padding: 12px 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  color: black;
+  font-size: 15px;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s, padding 0.3s ease;
+  position: relative;
+  background-color: #f9f1ea; /* Same as sidebar background */
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: hidden; /* Hide overflow for ellipsis */
+  text-overflow: ellipsis; /* Add ellipsis for hidden text */
+}
+
+.menu-item:hover {
+  background-color: #e9ecef; /* Hover effect for main menu items from your style */
+}
+
+.menu-item svg {
+  transition: font-size 0.3s ease;
+  min-width: 20px;
+  font-size: 18px; /* Uniform icon size */
+}
+
+.menu-item .arrow {
+  margin-left: auto; /* Push arrow to the right */
+  transition: transform 0.3s ease;
+  flex-shrink: 0; /* Prevent arrow from shrinking */
+}
+
+/* Only rotate arrow when open */
+.menu-item .arrow.open {
+  transform: rotate(180deg);
+}
+
+/* Hide text and arrows when sidebar is collapsed (desktop only) */
+/* This rule applies when sidebar has 'collapsed' but NOT 'active-mobile' class */
+.sidebar.collapsed:not(.active-mobile) .menu-item span,
+.sidebar.collapsed:not(.active-mobile) .menu-item .arrow {
+  display: none;
+}
+
+/* Center icon when text is hidden on collapsed sidebar */
+.sidebar.collapsed:not(.active-mobile) .menu-item {
+  justify-content: center;
+  padding: 15px; /* Adjust padding for centered icon */
+}
+
+
+/* Active parent menu item (e.g., Reports when selected, based on image) */
+.menu-item.active-parent,
+.menu-item.active-sub { /* This class is applied when a parent or sub-menu is active */
+  background-color: #e0e5e9; /* Light grey/blue background for active item, as per image */
+  color: #007bff; /* Blue text color for active item, as per image */
+}
+
+/* Submenu styles (first level) */
+.submenu {
+  display: flex;
+  flex-direction: column;
+  padding-left: 15px; /* Indent submenu items */
+  background-color: #f9f1ea; /* Same as sidebar background from your style */
+  overflow: hidden;
+  max-height: 0; /* Controlled by JS for expand/collapse (accordion effect) */
+  transition: max-height 0.3s ease-in-out; /* Smooth transition for submenu opening */
+}
+
+/* Open submenu */
+.submenu.open {
+  max-height: 500px; /* Arbitrary large height to reveal content */
+}
+
+/* Nested submenu (second level) */
+.submenu.nested {
+  padding-left: 20px; /* Further indent for nested */
+  background-color: #f9f1ea; /* Same as sidebar background from your style */
+}
+
+/* Styling for submenu links and menu items (nested ones) */
+.submenu a,
+.submenu .menu-item { /* Applies to both direct submenu links and nested menu-items */
+  padding: 10px 15px 10px 15px; /* Default submenu padding */
+  color: black;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  gap: 12px;
+  background-color: #f9f1ea; /* Ensure consistent background */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Hover effects for submenu links and nested submenu items from your provided style */
+.submenu a:hover,
+.submenu .menu-item:hover {
+  color: #007bff;
+  background-color: #e0e5e9;
+}
+
+/* Specific styles for nested submenu items (to ensure correct padding/indent) */
+.nested-submenu-item {
+  padding: 10px 15px 10px 35px; /* Adjust padding for nested items for better visual */
+  background-color: #f9f1ea; /* Ensure consistent background */
+  color: black;
+}
+
+.nested-submenu-item:hover {
+  color: #007bff;
+  background-color: #e0e5e9;
+}
+
+
+/* App Footer styles - Similar to Navbar */
+.app-footer {
+  background-color: #f9f1ea; /* Grey from your provided style */
+  border-top: 1px solid #ddd;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 0.85em;
+  color: #555;
+  position: fixed; /* Fixed to the bottom */
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 900; /* Below navbar, above main content in terms of Z-index */
+  box-sizing: border-box;
+  display: flex; /* Changed to flex to align content */
+  justify-content: space-between; /* Distribute items */
+  align-items: center;
+}
+
+/* New footer alignment divs */
+.footer-left-placeholder {
+  flex-grow: 1; /* Pushes center content to the middle */
+}
+
+.footer-center-content {
+  /* Removed flex-grow: 1; to allow for true centering by sibling flex-grow */
+  text-align: center; /* Centers the text within its own minimal width */
+}
+
+.footer-right-content {
+  flex-grow: 1; /* Allows it to take space and push its content right */
+  text-align: right;
+}
+
+.footer-link {
+    color: black; /* Default link color for footer */
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+    color: #007bff; /* Hover color for footer links */
+}
+
+
+/* Responsive adjustments for the Footer */
+@media (max-width: 768px) {
+  .app-footer {
+    flex-direction: column; /* Stack items vertically on mobile */
+    padding: 10px;
+    height: auto; /* Allow height to adjust based on content */
+    justify-content: center; /* Center content when stacked */
+  }
+
+  .footer-left-placeholder,
+  .footer-center-content,
+  .footer-right-content {
+    flex-grow: 0; /* No growing on mobile */
+    width: 100%; /* Take full width on mobile */
+    text-align: center; /* All items centered on mobile */
+    margin: 0; /* Remove specific margins */
+  }
+}
+
+
+.sidebar a {
+  text-decoration: none; /* Removes the underline */
+  color: inherit;       /* Makes the link color the same as the parent text color */
+}
+
+
+
+/* Style for the active navbar icon (whichever popup is open) */
+.navbar-icon.active {
+  color: #007bff; /* Example highlight color */
+  transform: scale(1.1);
+}
+
+
+
+
+
+
+
+
+
+
+/* --- New Styles for PageHeader --- */
+.page-header {
+  position: fixed; /* Keep it fixed below the navbar */
+  top: 60px; /* Aligns directly below your navbar (navbar height: 60px) */
+  left: 280px; /* Default starting point when sidebar is expanded (sidebar width: 280px) */
+  right: 0; /* Extends to the right edge of the viewport */
+  height: 60px; /* Height of the page header */
+  background-color: #fff; /* A clean white background */
+  border-bottom: 1px solid #eee; /* Subtle bottom border */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px; /* Horizontal padding */
+  z-index: 998; /* Lower than Navbar (1001), higher than Sidebar (999) and Main Content */
+  transition: left 0.3s ease; /* Smooth transition when sidebar expands/collapses */
+  box-sizing: border-box; /* Ensures padding is included in the width */
+}
+
+/* Adjust left position of page header when sidebar is collapsed (desktop) */
+.page-header.collapsed-margin {
+  left: 70px; /* Matches your .sidebar.collapsed width (70px) */
+}
+
+.page-header-title h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.page-header-breadcrumb span {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* --- Updates to Existing Styles for Better Integration --- */
+
+/* Main content area - IMPORTANT: Adjust padding-top */
+.main-content {
+  /* Existing styles */
+  flex-grow: 1;
+  padding: 20px;
+  background-color: #f0f2f5;
+  min-height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  margin-left: 280px; /* Default desktop margin, for expanded sidebar */
+  transition: margin-left 0.3s ease;
+
+  /* Crucial adjustment for fixed Navbar (60px) and PageHeader (60px) */
+  padding-top: 55px; /* 60px (Navbar) + 60px (PageHeader) + 20px (additional top padding) */
+}
+
+/* Responsive adjustments for PageHeader on mobile */
+@media screen and (max-width: 768px) {
+  .page-header {
+    left: 0; /* On mobile, the header always spans full width */
+    top: 60px; /* Stays below the navbar */
+    padding: 0 15px; /* Adjust padding for mobile screens */
+    height: 50px; /* Slightly smaller height on mobile */
+    z-index: 998; /* Stays the same, but sidebar acts as an overlay */
+  }
+
+  /* No need for .collapsed-margin on page-header on mobile as its left is always 0 */
+  .page-header.collapsed-margin {
+    left: 0; /* Ensure no margin is applied on mobile */
+  }
+
+  .page-header-title h1 {
+    font-size: 1.2rem;
+  }
+
+  .page-header-breadcrumb span {
+    font-size: 0.8rem;
+  }
+
+  /* Main content on mobile: no push from sidebar, but still accounts for fixed headers */
+  .main-content {
+    margin-left: 0 !important; /* Override desktop margin for mobile */
+    padding-top: 120px; /* Adjusted padding-top for mobile: 60px (Navbar) + 50px (PageHeader) + 10px (buffer) */
+  }
+
+  /*
+  The mobile sidebar is an overlay, so the main content doesn't need to adjust
+  its left margin based on the sidebar's "active" state.
+  The .main-content.collapsed-margin rule isn't relevant on mobile due to margin-left: 0 !important.
+  */
+}
